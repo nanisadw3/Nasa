@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creador</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/StaggeredMenu.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ElectricBorder.css') }}">
+    <style>
+        body {
+            background-color: #111;
+            color: #eee;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            display: grid;
+            place-items: center;
+            min-height: 100vh;
+        }
+        #creator-card {
+            padding: 3rem 4rem;
+            border-radius: 20px; /* The border-radius for the effect */
+            text-align: center;
+            margin-bottom: 20px; /* Space between card and button */
+        }
+        .creator-content img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid #444;
+            margin-bottom: 1.5rem;
+            object-fit: cover;
+        }
+        .creator-content h2 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin: 0 0 0.5rem 0;
+            color: #fff;
+        }
+        .creator-content p {
+            font-size: 1.2rem;
+            margin: 0 0 2rem 0;
+            color: #aaa;
+        }
+        .contact-button {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border: 1px solid #fff;
+            border-radius: 8px;
+            color: #111;
+            background-color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+        }
+        .contact-button:hover {
+            background-color: #eee;
+            border-color: #eee;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Temporary fix for StaggeredMenu click issue */
+        .staggered-menu-wrapper:not([data-open="true"]) {
+            pointer-events: none;
+        }
+
+        .staggered-menu-wrapper[data-open="true"] .sm-panel-list {
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="staggered-menu-container"></div>
+
+    <div id="creator-card">
+        <div class="creator-content">
+            <img src="/static/imagenes/avatar.png" alt="Avatar de Iñaki Sobera">
+            <h2>Iñaki Sobera</h2>
+            <p>Creador del Proyecto</p>
+        </div>
+    </div>
+
+    <a href="https://www.instagram.com/inakisoberas?igsh=MXNyOGpzZG1jaTlxMA==" target="_blank" rel="noopener noreferrer" class="contact-button">Contacto</a>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="{{ url_for('static', filename='js/StaggeredMenu.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/ElectricBorder.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Staggered Menu
+            const menuItems = [
+                { label: 'Inicio', link: '/' },
+                { label: 'Imagen del Día', link: '/apod' },
+                { label: 'Posts', link: '/posts' },
+                { label: 'Creador', link: '/creador' }
+            ];
+            new StaggeredMenu('staggered-menu-container', {
+                items: menuItems,
+                displaySocials: true,
+                socialItems: [{ label: 'Instagram', link: 'https://www.instagram.com/inakisoberas?igsh=MXNyOGpzZG1jaTlxMA==' }],
+                displayItemNumbering: false,
+            });
+
+            // Initialize Electric Border
+            new ElectricBorder('creator-card', {
+                color: '#7df9ff',
+                chaos: 0.5,
+                thickness: 2,
+            });
+        });
+    </script>
+</body>
+</html>

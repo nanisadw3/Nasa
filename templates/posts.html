@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Posts de la NASA</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/StaggeredMenu.css') }}">
+    <style>
+        body {
+            background-color: #000;
+            color: #c5c6c7;
+            font-family: sans-serif;
+            margin: 0;
+        }
+        .container {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 8rem; /* Space for nav header */
+        }
+        .post {
+            background-color: #222; /* Grey background */
+            border-radius: 8px;
+            padding: 1.5rem 2rem; /* More horizontal padding */
+            margin-bottom: 2rem;
+        }
+        .post h3 {
+            text-align: center; /* Centered title */
+            margin-bottom: 1.5rem;
+        }
+        .post p {
+            text-align: justify; /* Justified text */
+            line-height: 1.6;
+        }
+        .post img, .post iframe {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px; /* More rounded corners */
+            border: 2px solid #444; /* Border for images */
+            margin: 0 auto;
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="staggered-menu-container"></div>
+
+    <div class="container" id="posts-container">
+    <h2>Últimos Posts</h2>
+    {% for title, data in posts.items() %}
+        <div class="post">
+            <h3>{{ title }}</h3>
+            {% if 'youtube.com/embed' in data.Link %}
+                <iframe src="{{ data.Link }}" frameborder="0" allowfullscreen style="width: 100%; height: 400px;"></iframe>
+            {% else %}
+                <img src="{{ data.Link }}" alt="{{ title }}">
+            {% endif %}
+            <p><b>Explicación:</b> {{ data.Explicacion }}</p>
+        </div>
+    {% else %}
+        <p>No hay posts disponibles.</p>
+    {% endfor %}
+    </div>
+
+    <div id="loading-indicator" style="display: none; text-align: center; padding: 2rem;">
+        <div class="spinner"></div>
+        <h3>Cargando más posts...</h3>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="{{ url_for('static', filename='js/StaggeredMenu.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Staggered Menu Initialization
+            const menuItems = [
+                { label: 'Inicio', link: '/' },
+                { label: 'Imagen del Día', link: '/apod' },
+                { label: 'Posts', link: '/posts' },
+                { label: 'Creador', link: '/creador' }
+            ];
+            new StaggeredMenu('staggered-menu-container', {
+                items: menuItems,
+                displaySocials: true,
+                socialItems: [{ label: 'Instagram', link: 'https://www.instagram.com/inakisoberas?igsh=MXNyOGpzZG1jaTlxMA==' }],
+                displayItemNumbering: false,
+            });
+
+            // Infinite Scroll Logic
+            const container = document.getElementById('posts-container');
+            const loadingIndicator = document.getElementById('loading-indicator');
+            let isLoading = false;
+
+            const createPostHTML = (post) => {
+                let mediaHTML = '';
+                if (post.media_type === 'video') {
+                    mediaHTML = `<iframe src="${post.url}" frameborder="0" allowfullscreen style="width: 100%; height: 400px;"></iframe>`;
+                } else {
+                    mediaHTML = `<img src="${post.url}" alt="${post.title}">`;
+                }
+
+                return `
+                    <div class="post">
+                        <h3>${post.title}</h3>
+                        ${mediaHTML}
+                        <p><b>Explicación:</b> ${post.explanation}</p>
+                    </div>`;
+            };
+
+            const loadMorePosts = async () => {
+                if (isLoading) return;
+                isLoading = true;
+                loadingIndicator.style.display = 'block';
+
+                try {
+                    const response = await fetch('/api/posts');
+                    const newPosts = await response.json();
+                    
+                    if (newPosts && newPosts.length > 0) {
+                        let postsHTML = '';
+                        newPosts.forEach(post => {
+                            postsHTML += createPostHTML(post);
+                        });
+                        container.insertAdjacentHTML('beforeend', postsHTML);
+                    }
+                } catch (error) {
+                    console.error('Error al cargar más posts:', error);
+                    loadingIndicator.innerHTML = '<h3>Error al cargar. Intenta de nuevo más tarde.</h3>';
+                }
+
+                loadingIndicator.style.display = 'none';
+                isLoading = false;
+            };
+
+            window.addEventListener('scroll', () => {
+                // Check if user is near the bottom
+                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
+                    loadMorePosts();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

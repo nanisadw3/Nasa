@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imagen Astronómica del Día</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/StaggeredMenu.css') }}">
+    <style>
+        body {
+            background-color: #000;
+            color: #f0f0f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+        }
+        .container {
+            background-color: #222; /* Grey background */
+            padding: 1.5rem 2rem;
+            max-width: 960px;
+            margin: 2rem auto;
+            padding-top: 8rem; /* Space for nav header */
+            border-radius: 8px;
+        }
+        .container h2 {
+            text-align: center; /* Centered title */
+            margin-bottom: 1.5rem;
+        }
+        .container p {
+            text-align: justify; /* Justified text */
+            line-height: 1.6;
+        }
+        img, iframe {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px; /* More rounded corners */
+            border: 2px solid #444; /* Border for images */
+            margin: 1rem auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="staggered-menu-container"></div>
+
+    <div class="container">
+    {% if post %}
+        <h2>{{ post.title }}</h2>
+        {% if post.media_type == 'image' %}
+            <img src="{{ post.url }}" alt="{{ post.title }}">
+        {% elif post.media_type == 'video' %}
+            <iframe src="{{ post.url }}" frameborder="0" allowfullscreen style="width: 100%; height: 500px;"></iframe>
+        {% endif %}
+        <p>{{ post.explanation }}</p>
+    {% else %}
+        <p>No se pudo cargar la imagen del día.</p>
+    {% endif %}
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="{{ url_for('static', filename='js/StaggeredMenu.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuItems = [
+                { label: 'Inicio', link: '/' },
+                { label: 'Imagen del Día', link: '/apod' },
+                { label: 'Posts', link: '/posts' },
+                { label: 'Creador', link: '/creador' }
+            ];
+
+            new StaggeredMenu('staggered-menu-container', {
+                items: menuItems,
+                displaySocials: true,
+                socialItems: [{ label: 'Instagram', link: 'https://www.instagram.com/inakisoberas?igsh=MXNyOGpzZG1jaTlxMA==' }],
+                displayItemNumbering: false,
+            });
+        });
+    </script>
+</body>
+</html>
