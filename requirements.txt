@@ -3,3 +3,4 @@ requests
 deep-translator
 beautifulsoup4
 Pillow
+gunicorn
