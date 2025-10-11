@@ -1,0 +1,5 @@
+Flask
+requests
+deep-translator
+beautifulsoup4
+Pillow
