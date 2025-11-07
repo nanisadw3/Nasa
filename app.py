@@ -102,16 +102,17 @@ def posts():
     try:
         response = requests.get(url)
         response.raise_for_status()
+        data = response.json()
     except requests.exceptions.RequestException as e:
         return render_template('posts.html', error=f"Error al contactar la API de la NASA: {e}")
 
-    if isinstance(respuesta, dict) and respuesta.get("error"):
+    if isinstance(data, dict) and data.get("error"):
         return (
-            f"<h1>Error de la API de la NASA</h1><p>{respuesta['error']['message']}</p>"
+            f"<h1>Error de la API de la NASA</h1><p>{data['error']['message']}</p>"
         )
 
     dic = {}
-    for i in respuesta:
+    for i in data:
         if not i.get("title") or not i.get("url"):
             continue
 
