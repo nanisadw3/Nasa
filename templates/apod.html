@@ -45,10 +45,12 @@
     <div class="container">
     {% if post %}
         <h2>{{ post.title }}</h2>
-        {% if post.media_type == 'image' %}
-            <img src="{{ post.url }}" alt="{{ post.title }}">
-        {% elif post.media_type == 'video' %}
-            <iframe src="{{ post.url }}" frameborder="0" allowfullscreen style="width: 100%; height: 500px;"></iframe>
+        {% if post.url %}
+            {% if post.media_type == 'image' %}
+                <img src="{{ post.url }}" alt="{{ post.title }}">
+            {% elif post.media_type == 'video' %}
+                <iframe src="{{ post.url }}" frameborder="0" allowfullscreen style="width: 100%; height: 500px;"></iframe>
+            {% endif %}
         {% endif %}
         <p>{{ post.explanation }}</p>
     {% else %}

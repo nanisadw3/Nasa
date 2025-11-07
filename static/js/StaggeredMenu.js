@@ -113,6 +113,23 @@ class StaggeredMenu {
 
     attachEventListeners() {
         this.toggleBtnRef.addEventListener('click', () => this.toggleMenu());
+
+        // Handle clicks on menu items to navigate
+        this.panelRef.addEventListener('click', (e) => {
+            const link = e.target.closest('.sm-panel-item');
+            if (link && link.href) {
+                e.preventDefault(); // Prevent immediate navigation
+                // If the menu is open, close it and navigate after a delay
+                if (this.open) {
+                    this.toggleMenu();
+                    setTimeout(() => {
+                        window.location.href = link.href;
+                    }, 400); // Delay to allow closing animation to start
+                } else {
+                    window.location.href = link.href;
+                }
+            }
+        });
     }
 
     toggleMenu() {

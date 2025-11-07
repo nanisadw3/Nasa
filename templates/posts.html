@@ -62,20 +62,28 @@
     <div id="staggered-menu-container"></div>
 
     <div class="container" id="posts-container">
-    <h2>Últimos Posts</h2>
-    {% for title, data in posts.items() %}
-        <div class="post">
-            <h3>{{ title }}</h3>
-            {% if 'youtube.com/embed' in data.Link %}
-                <iframe src="{{ data.Link }}" frameborder="0" allowfullscreen style="width: 100%; height: 400px;"></iframe>
-            {% else %}
-                <img src="{{ data.Link }}" alt="{{ title }}">
-            {% endif %}
-            <p><b>Explicación:</b> {{ data.Explicacion }}</p>
+    {% if error %}
+        <div class="post" style="background-color: #4d2a2a; border: 1px solid #ff5c5c;">
+            <h3 style="color: #ffc1c1;">Error de Conexión</h3>
+            <p>{{ error }}</p>
+            <p>Parece que el servicio de la NASA no está respondiendo en este momento. Por favor, inténtalo de nuevo más tarde.</p>
         </div>
     {% else %}
-        <p>No hay posts disponibles.</p>
-    {% endfor %}
+        <h2>Últimos Posts</h2>
+        {% for title, data in posts.items() %}
+            <div class="post">
+                <h3>{{ title }}</h3>
+                {% if data.Link and 'youtube.com/embed' in data.Link %}
+                    <iframe src="{{ data.Link }}" frameborder="0" allowfullscreen style="width: 100%; height: 400px;"></iframe>
+                {% else %}
+                    <img src="{{ data.Link }}" alt="{{ title }}">
+                {% endif %}
+                <p><b>Explicación:</b> {{ data.Explicacion }}</p>
+            </div>
+        {% else %}
+            <p>No hay posts disponibles.</p>
+        {% endfor %}
+    {% endif %}
     </div>
 
     <div id="loading-indicator" style="display: none; text-align: center; padding: 2rem;">
